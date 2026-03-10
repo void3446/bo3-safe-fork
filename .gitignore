@@ -1,0 +1,19 @@
+# Local notes and test fixtures
+/reference/
+/test/
+
+# Packaged outputs
+/release/
+
+# Visual Studio build outputs inside the nested source tree
+/src/.vs/
+/src/x64/
+/src/Hello World!/
+
+# Common IDE files
+*.VC.db
+*.VC.opendb
+*.suo
+*.user
+*.userosscache
+*.rsuser
