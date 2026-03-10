@@ -10,9 +10,8 @@ Upstream reference:
 The default public-safe setup is:
 
 - BO3 still autoloads `d3d11.dll` from the game folder.
-- The handshake-related patch path stays enabled.
-- Inventory unlock hooks stay off by default.
-- The item quantity override remains optional through `bo3_patch.ini`.
+- The recommended core startup settings match the original patch behavior.
+- Free unlocks stay off by default.
 - `BO3 Safe` starts T7Patch before launching the game.
 - `BO3 Direct` launches the game without starting T7Patch.
 
@@ -32,10 +31,28 @@ Both launchers still use the custom `d3d11.dll`, because the DLL lives in the BO
 
 ## Config file
 
-The installer writes `bo3_patch.ini` into your BO3 install folder.
+The installer writes one config file into your BO3 install folder:
+
+- `bo3_patch.ini`
+
+Both launchers use the same config file. `BO3 Safe` only adds the T7 startup step.
+
+Recommended usage:
+
+- Leave all unlock options set to `false` for legit progression.
+- Turn on `override_item_quantity=true` if you want the optional quantity override.
+- Leave the four core hook options enabled unless you are debugging.
 
 Important options:
 
+- `enable_crc`
+  Keeps the original debug-register hook activation path enabled. Recommended: `true`.
+- `enable_presence`
+  Keeps the presence hook enabled. Recommended: `true`.
+- `enable_instant_message`
+  Keeps the instant-message hook enabled. Recommended: `true`.
+- `enable_out_of_band`
+  Keeps the out-of-band hook enabled. Recommended: `true`.
 - `override_item_quantity`
   Turns on the upstream quantity override hook.
 - `enable_debug_logging`
@@ -59,6 +76,17 @@ Important options:
 
 For legit-safe play, leave every unlock option set to `false`.
 
+Advanced note:
+
+- Disabling the four core hook options is for debugging only. Those settings can change startup behavior, break online connection flow, or crash the game on some setups. If you experiment and the game becomes unstable, restore `enable_crc=true`, `enable_presence=true`, `enable_instant_message=true`, and `enable_out_of_band=true` first.
+
+## Launcher behavior
+
+- `BO3 Direct.cmd` launches BO3 without T7.
+- `BO3 Safe.cmd` starts T7Patch if needed, then launches BO3.
+
+Both launchers still load the same custom `d3d11.dll` and the same `bo3_patch.ini`.
+
 ## Building
 
 1. Install Visual Studio 2022 Build Tools with the C++ workload.
@@ -69,5 +97,5 @@ For legit-safe play, leave every unlock option set to `false`.
 
 - The project still targets `d3d11.dll` as the output name because BO3 autoloads that filename.
 - If `bo3_patch.ini` is missing, the DLL creates a safe default config next to itself on first load.
-- T7Patch is optional for `BO3 Direct`, but recommended for safer public play.
-- The current community-friendly config default is legit-safe. The item quantity override is still available if you want it.
+- T7Patch is optional for `BO3 Direct`, but `BO3 Safe` is the recommended path for public online play.
+- The current community-friendly config defaults are legit-safe. The item quantity override remains optional through `bo3_patch.ini`.

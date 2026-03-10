@@ -34,11 +34,58 @@ if ($Clean -and (Test-Path $releaseDir)) {
     Remove-Item -Recurse -Force $releaseDir
 }
 
-$buildCommand = "`"$vcvarsPath`" && `"$msbuildPath`" `"$solutionPath`" /t:Build /p:Configuration=Release /p:Platform=x64"
-cmd /d /c $buildCommand
+function Invoke-SanitizedCmd {
+    param(
+        [string]$Arguments,
+        [string]$WorkingDirectory
+    )
 
-if ($LASTEXITCODE -ne 0) {
-    throw "Build failed with exit code $LASTEXITCODE."
+    $startInfo = [System.Diagnostics.ProcessStartInfo]::new($env:ComSpec, $Arguments)
+    $startInfo.WorkingDirectory = $WorkingDirectory
+    $startInfo.UseShellExecute = $false
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+
+    foreach ($key in @($startInfo.Environment.Keys)) {
+        $startInfo.Environment.Remove($key)
+    }
+
+    $mergedEnvironment = @{}
+    foreach ($scope in 'Machine', 'User', 'Process') {
+        foreach ($entry in [System.Environment]::GetEnvironmentVariables($scope).GetEnumerator()) {
+            $name = [string]$entry.Key
+            $mergedEnvironment[$name.ToLowerInvariant()] = @{
+                Name = if ($name.Equals('PATH', [System.StringComparison]::OrdinalIgnoreCase)) { 'Path' } else { $name }
+                Value = [string]$entry.Value
+            }
+        }
+    }
+
+    foreach ($entry in $mergedEnvironment.Values) {
+        $startInfo.Environment[$entry.Name] = $entry.Value
+    }
+
+    $process = [System.Diagnostics.Process]::Start($startInfo)
+    $stdout = $process.StandardOutput.ReadToEnd()
+    $stderr = $process.StandardError.ReadToEnd()
+    $process.WaitForExit()
+
+    if ($stdout) {
+        Write-Host $stdout.TrimEnd()
+    }
+
+    if ($stderr) {
+        Write-Host $stderr.TrimEnd()
+    }
+
+    return $process.ExitCode
+}
+
+$buildCommand = "/d /c ""call `"$vcvarsPath`" && `"$msbuildPath`" `"$solutionPath`" /t:Build /p:Configuration=Release /p:Platform=x64"""
+$exitCode = Invoke-SanitizedCmd -Arguments $buildCommand -WorkingDirectory (Join-Path $repoRoot 'src')
+
+if ($exitCode -ne 0) {
+    throw "Build failed with exit code $exitCode."
 }
 
 if (-not (Test-Path $buildOutputDll)) {

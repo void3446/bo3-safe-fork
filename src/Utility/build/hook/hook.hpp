@@ -26,6 +26,7 @@ namespace hook
         p[0] = 0x49; p[1] = 0xBB;
         *reinterpret_cast<void**>(p + 2) = dst;
         p[10] = 0x41; p[11] = 0xFF; p[12] = 0xE3; p[13] = 0x90;
+        FlushInstructionCache(GetCurrentProcess(), src, 14);
         VirtualProtect(src, 14, old, &old);
     }
 
@@ -72,6 +73,7 @@ namespace hook
                 DWORD old;
                 VirtualProtect(hooks[i].target, 14, PAGE_EXECUTE_READWRITE, &old);
                 memcpy(hooks[i].target, hooks[i].original, 14);
+                FlushInstructionCache(GetCurrentProcess(), hooks[i].target, 14);
                 VirtualProtect(hooks[i].target, 14, old, &old);
 
                 hooks[i].enabled = false;
@@ -121,6 +123,7 @@ namespace hook
 
                 VirtualProtect(hooks[i].target, 14, PAGE_EXECUTE_READWRITE, &old);
                 memcpy(hooks[i].target, hooks[i].original, 14);
+                FlushInstructionCache(GetCurrentProcess(), hooks[i].target, 14);
                 VirtualProtect(hooks[i].target, 14, old, &old);
 
                 hooks[i].enabled = false;

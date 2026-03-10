@@ -17,6 +17,8 @@ namespace
         "; enable_debug_logging: writes bo3_patch.log next to the DLL for local diagnostics.\r\n"
         "; Leave this false in normal use.\r\n"
         "enable_debug_logging=false\r\n"
+        "; Advanced: leave the next four core options enabled for normal use.\r\n"
+        "; Disabling them is for debugging only and can cause startup crashes or online issues.\r\n"
         "; enable_crc: preserves the original debug-register hook activation path.\r\n"
         "enable_crc=true\r\n"
         "; enable_presence: keeps the handshake-related Live_PresenceParty patch enabled.\r\n"
@@ -30,6 +32,7 @@ namespace
         "\r\n"
         "[inventory]\r\n"
         "; override_item_quantity: enables the original quantity override hook.\r\n"
+        "; Set this to true if you want the optional quantity override.\r\n"
         "; Leave this false for legit-safe play.\r\n"
         "override_item_quantity=false\r\n"
         "; item_quantity: value returned by the quantity override hook when enabled.\r\n"
@@ -51,7 +54,27 @@ namespace
 
     bool read_bool(const char* section, const char* key, bool default_value) noexcept
     {
-        return GetPrivateProfileIntA(section, key, default_value ? 1 : 0, g_config_path.c_str()) != 0;
+        char buffer[32]{};
+        const char* default_text = default_value ? "true" : "false";
+        GetPrivateProfileStringA(section, key, default_text, buffer, static_cast<DWORD>(_countof(buffer)), g_config_path.c_str());
+
+        std::string value(buffer);
+        for (char& ch : value)
+        {
+            ch = static_cast<char>(tolower(static_cast<unsigned char>(ch)));
+        }
+
+        if (value == "1" || value == "true" || value == "yes" || value == "on")
+        {
+            return true;
+        }
+
+        if (value == "0" || value == "false" || value == "no" || value == "off")
+        {
+            return false;
+        }
+
+        return default_value;
     }
 
     int read_int(const char* section, const char* key, int default_value) noexcept

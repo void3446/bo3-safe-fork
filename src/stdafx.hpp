@@ -5,6 +5,7 @@
 #include <TlHelp32.h>  
 
 #include <intrin.h>
+#include <cctype>
 #include <cstring>      
 #include <cstdlib>
 #include <string>
