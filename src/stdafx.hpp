@@ -21,6 +21,7 @@
 #include "Core/Engine/engine.hpp"
 #include "Core/Engine/crc/crc.hpp"
 #include "Core/Config/config.hpp"
+#include "Core/Debug/debug.hpp"
 #include "Utility/build/hook/hook.hpp"
 
 #include "Core/Hook/hook.hpp"

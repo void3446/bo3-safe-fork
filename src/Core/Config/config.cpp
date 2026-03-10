@@ -9,25 +9,44 @@ namespace
         "; BO3 Safe Fork configuration\r\n"
         "; This file lives next to d3d11.dll in your BO3 install folder.\r\n"
         "; Missing or malformed values fall back to the safe defaults below.\r\n"
+        "; Restart BO3 after changing this file.\r\n"
         "\r\n"
         "[core]\r\n"
+        "; show_startup_popup: shows the module startup popup from the original project.\r\n"
         "show_startup_popup=false\r\n"
+        "; enable_debug_logging: writes bo3_patch.log next to the DLL for local diagnostics.\r\n"
+        "; Leave this false in normal use.\r\n"
+        "enable_debug_logging=false\r\n"
+        "; enable_crc: preserves the original debug-register hook activation path.\r\n"
         "enable_crc=true\r\n"
+        "; enable_presence: keeps the handshake-related Live_PresenceParty patch enabled.\r\n"
         "enable_presence=true\r\n"
+        "; enable_instant_message: keeps the original instant message filter hook enabled.\r\n"
         "enable_instant_message=true\r\n"
+        "; enable_out_of_band: keeps the original out-of-band voice packet filter hook enabled.\r\n"
         "enable_out_of_band=true\r\n"
+        "; memory_threshold_bytes: wait until BO3 reaches this private memory size before installing hooks.\r\n"
         "memory_threshold_bytes=3145728000\r\n"
         "\r\n"
         "[inventory]\r\n"
-        "; This is the upstream quantity override hook. Leave false for legit-safe play.\r\n"
+        "; override_item_quantity: enables the original quantity override hook.\r\n"
+        "; Leave this false for legit-safe play.\r\n"
         "override_item_quantity=false\r\n"
+        "; item_quantity: value returned by the quantity override hook when enabled.\r\n"
         "item_quantity=999\r\n"
+        "; unlock_item_attachments: unlocks attachment count and attachment lock checks.\r\n"
         "unlock_item_attachments=false\r\n"
+        "; unlock_challenge_items: unlocks challenge-based item checks.\r\n"
         "unlock_challenge_items=false\r\n"
+        "; unlock_entitlement_backgrounds: unlocks entitlement background checks.\r\n"
         "unlock_entitlement_backgrounds=false\r\n"
+        "; unlock_item_options: unlocks item option lock checks.\r\n"
         "unlock_item_options=false\r\n"
+        "; unlock_item_purchases: bypasses purchase checks.\r\n"
         "unlock_item_purchases=false\r\n"
+        "; unlock_character_customization: unlocks character customization checks.\r\n"
         "unlock_character_customization=false\r\n"
+        "; unlock_emblems_from_challenges: unlocks emblem/backing challenge checks.\r\n"
         "unlock_emblems_from_challenges=false\r\n";
 
     bool read_bool(const char* section, const char* key, bool default_value) noexcept
@@ -90,6 +109,7 @@ namespace
     void load_settings() noexcept
     {
         g_settings.core.show_startup_popup = read_bool("core", "show_startup_popup", false);
+        g_settings.core.enable_debug_logging = read_bool("core", "enable_debug_logging", false);
         g_settings.core.enable_crc = read_bool("core", "enable_crc", true);
         g_settings.core.enable_presence = read_bool("core", "enable_presence", true);
         g_settings.core.enable_instant_message = read_bool("core", "enable_instant_message", true);

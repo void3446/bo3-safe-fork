@@ -140,6 +140,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Debug\debug.hpp" />
     <ClInclude Include="Core\Config\config.hpp" />
     <ClInclude Include="Core\Engine\crc\crc.hpp" />
     <ClInclude Include="Core\Engine\engine.hpp" />
@@ -148,6 +149,7 @@
     <ClInclude Include="stdafx.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Debug\debug.cpp" />
     <ClCompile Include="Core\Config\config.cpp" />
     <ClCompile Include="Core\Engine\crc\crc.cpp" />
     <ClCompile Include="Core\Hook\hook.cpp" />

@@ -4,7 +4,7 @@ This fork keeps the third-party BO3 `d3d11.dll` startup fix but makes the invent
 
 Upstream reference:
 
-- Original project: `pressanykeytocontinueproject/Hello-World-`
+- Original project: `https://github.com/pressanykeytocontinueproject/Hello-World-`
 - This fork keeps the BO3 startup fix path and removes the always-on unlock behavior by default.
 
 The default public-safe setup is:
@@ -38,6 +38,8 @@ Important options:
 
 - `override_item_quantity`
   Turns on the upstream quantity override hook.
+- `enable_debug_logging`
+  Writes `bo3_patch.log` next to the DLL for local diagnostics. Leave this `false` in normal use.
 - `item_quantity`
   The quantity used when that override is enabled.
 - `unlock_item_attachments`

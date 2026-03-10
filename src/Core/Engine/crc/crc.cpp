@@ -3,6 +3,9 @@
 
 namespace crc
 {
+    inline LONG enable_events = 0;
+    inline LONG disable_events = 0;
+
 	long __stdcall vectored_exception_handler(EXCEPTION_POINTERS* info) {
 
 		if (info->ExceptionRecord->ExceptionCode == EXCEPTION_SINGLE_STEP)
@@ -10,6 +13,11 @@ namespace crc
 			if (info->ContextRecord->Dr1 == BASE_OFFSET(0x1F9CCE26))
 			{
 				hook::enable_all();
+                const LONG count = InterlockedIncrement(&enable_events);
+                if (count <= 8)
+                {
+                    debug::log("crc single-step enable_all hit #%ld", count);
+                }
 
 				info->ContextRecord->Dr1 = BASE_OFFSET(0x3000);
 
@@ -19,6 +27,11 @@ namespace crc
 			else if (info->ContextRecord->Dr1 == BASE_OFFSET(0x3000))
 			{
 				hook::disable_all();
+                const LONG count = InterlockedIncrement(&disable_events);
+                if (count <= 8)
+                {
+                    debug::log("crc single-step disable_all hit #%ld", count);
+                }
 
 				info->ContextRecord->Dr1 = BASE_OFFSET(0x1F9CCE26);
 
@@ -81,7 +94,9 @@ namespace crc
 	__declspec(noinline) void runtime()
 	{
 		AddVectoredExceptionHandler(1, vectored_exception_handler);
+        debug::log("vectored exception handler installed");
 
 		crc_runtime();
+        debug::log("crc runtime armed");
 	}
 }

@@ -7,6 +7,7 @@ namespace config
     struct core_settings
     {
         bool show_startup_popup{ false };
+        bool enable_debug_logging{ false };
         bool enable_crc{ true };
         bool enable_presence{ true };
         bool enable_instant_message{ true };
